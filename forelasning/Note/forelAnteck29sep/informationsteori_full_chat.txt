@@ -1,0 +1,160 @@
+
+Okej, jag fattar — du återger i princip föreläsarens snack om **överraskning (”surprisal”) och entropi** och hur det kopplas till **kanalmodeller i informationsteori**. Jag kan koka ner det lite mer begripligt:
+
+---
+
+### 1. Överraskning (“surprisal”)
+- Idén: ju mer osannolik en händelse är, desto mer överraskad blir man om den inträffar.  
+- Matematiskt:  
+  överraskning(x) = -log2 P(x)  
+  Så om något händer med sannolikhet 1% blir det mycket mer “wow” än om det händer med sannolikhet 90%.
+
+Exempel:  
+- Din kompis beställer alltid samma kebabrulle → låg överraskning.  
+- Din kompis beställer plötsligt sushi → hög överraskning.
+
+---
+
+### 2. Entropi
+- Det genomsnittliga värdet av överraskningen = **entropin**.  
+- Entropi mäter alltså hur mycket osäkerhet eller information det finns i en sannolikhetsfördelning.
+
+Exempel:  
+- Om något alltid händer på samma sätt (100%) → entropi = 0 (ingen osäkerhet).  
+- Om det finns flera jämnt fördelade alternativ → entropi hög.
+
+---
+
+### 3. Kanalmodell
+Nu tar vi ett steg vidare: inte bara sannolikheter för händelser, utan för **kommunikation**.
+
+- Alice skickar en symbol från ett alfabet (t.ex. {0,1}).  
+- Bob tar emot en symbol, men vägen (kanalen) kan innehålla brus → fel kan ske.  
+- Vi beskriver kanalen med **betingade sannolikheter** P(y|x), alltså sannolikheten att Bob får y givet att Alice skickade x.
+
+---
+
+### 4. Exempel: Binär symmetrisk kanal (BSC)
+- Alfabet: {0,1}.  
+- Med sannolikhet (1-p) får Bob samma symbol som Alice skickade.  
+- Med sannolikhet p blir symbolen flippad.  
+
+Matrisform:
+[ [1-p, p],
+  [p, 1-p] ]
+
+Det här är typ **standardmodellen för brusig kommunikation**.
+
+---
+
+👉 Så, när din föreläsare snackar om “överraskning” → det är grunden (entropi).  
+Och när hen glider in på “kanalmodell” → det är nästa steg, där man stoppar in brus och börjar mäta hur mycket information som faktiskt kan komma fram korrekt.
+
+---
+
+Yes! Nu börjar föreläsaren väva ihop **allt det abstrakta**:  
+
+1. **Överföringsmatrisen (transition matrix)**  
+   - Raderna motsvarar: *”vilken symbol Alice skickar”*.  
+   - Kolumnerna motsvarar: *”vilken symbol Bob tar emot”*.  
+   - Varje rad summerar till 1 (för att *något* måste hända).  
+
+   Exempel: Binär symmetrisk kanal (BSC):
+   [ [1-p, p],
+     [p, 1-p] ]
+
+   - Rad 1: Alice skickar 0 → Bob får 0 med sannolikhet (1-p), 1 med sannolikhet p.  
+   - Rad 2: Alice skickar 1 → Bob får 0 med sannolikhet p, 1 med sannolikhet (1-p).  
+
+---
+
+2. **Fördelningen på X (vad Alice skickar)**  
+   - Alice skickar inte helt slumpmässigt, utan enligt en sannolikhetsfördelning P_X(x).  
+   - Exempel: hon skickar 0 med 50% chans och 1 med 50% chans.  
+   - Eller: kanske hon skickar 0 mycket oftare än 1.  
+
+---
+
+3. **Fördelningen på Y (vad Bob tar emot)**  
+   När vi kombinerar:
+   - P_X(x) = sannolikhet för vad Alice skickar.  
+   - P(y|x) = kanalens felmodell.  
+
+   Då får vi:
+   P_Y(y) = Σ_x P_X(x) * P(y|x)
+
+   → alltså, sannolikheten för vad Bob faktiskt tar emot.  
+
+---
+
+4. **Exempelberäkning**  
+Låt’s ta en **BSC med fel p=0.1**.  
+Alice skickar 0 och 1 lika ofta (50/50).  
+
+- P_Y(0) = P_X(0)*(1-p) + P_X(1)*p  
+= 0.5*0.9 + 0.5*0.1 = 0.5  
+
+- P_Y(1) = P_X(0)*p + P_X(1)*(1-p)  
+= 0.5*0.1 + 0.5*0.9 = 0.5  
+
+👉 Bob får alltså lika ofta 0 som 1 (fördelningen blir balanserad), trots att kanalen är brusig.
+
+---
+
+5. **Poängen**  
+- **Överföringsmatrisen** beskriver *”kanalen”*.  
+- **Fördelning på X** beskriver *”vad Alice faktiskt använder”*.  
+- Tillsammans ger de en **fördelning på Y**.  
+- Detta blir grunden för att räkna **entropier, mutual information och kapacitet** (där det blir riktigt spännande).  
+
+---
+
+Yes, exakt – nu gjorde föreläsaren ett **konkret räkneexempel** med en **binär symmetrisk kanal** men där Alice **inte skickar 0 och 1 lika ofta**.  
+
+Vi kan skriva upp hela saken lite mer strukturerat:
+
+---
+
+### Förutsättningar:
+- Kanal = binär symmetrisk, med fel p = 0.1.  
+  (dvs 10% chans att symbolen flippar).  
+- Alice skickar:
+  - P_X(0) = 0.6  
+  - P_X(1) = 0.4
+
+---
+
+### Räkna sannolikheten för Bobs mottagning
+
+**1. Sannolikheten att Bob tar emot 0:**  
+P_Y(0) = P_X(0)*P(0|0) + P_X(1)*P(0|1)  
+= 0.6*0.9 + 0.4*0.1 = 0.58  
+
+**2. Sannolikheten att Bob tar emot 1:**  
+P_Y(1) = P_X(0)*P(1|0) + P_X(1)*P(1|1)  
+= 0.6*0.1 + 0.4*0.9 = 0.42  
+
+---
+
+### Slutsats:
+- Bob ser alltså en **utjämnad fördelning**:
+  - P_Y(0) = 0.58  
+  - P_Y(1) = 0.42
+
+Så även om Alice skickade fler nollor från början, så “drar kanalen tillbaka” den obalansen lite.
+
+---
+
+### Det här leder till nästa steg
+Nu har vi tre lager sannolikheter:
+1. Input distribution P_X (Alice skickar 0/1).  
+2. Transition matrix (felchanser i kanalen).  
+3. Output distribution P_Y (vad Bob faktiskt ser).  
+
+Med de här kan vi börja räkna:
+- Entropi H(X) (osäkerhet i Alice input).  
+- Entropi H(Y) (osäkerhet i Bobs mottagna signal).  
+- Den gemensamma H(X,Y).  
+- Och framförallt: mutual information I(X;Y) = hur mycket information faktiskt kom fram genom den brusiga kanalen.
+
+---
